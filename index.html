@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market | XYZ Corporate</title>
+      <link rel="icon" type="image/png" href="icon.png?v=1">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loader-content">
+            <h1 class="loader-logo">XYZ | <span>CORPORATE</span></h1>
+            <div class="loader-bar"><div class="progress"></div></div>
+            <p>Loading International Markets...</p>
+        </div>
+    </div>
+
+    <a href="https://wa.me/9005513448905" class="whatsapp-btn" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="Support">
+    </a>
+
+    <header>
+        <div class="logo">
+            <div class="parent-brand">XYZ </div>
+            <div class="subsidiary">
+                <span class="divider">|</span> 
+                <br>
+                <br>
+                <span class="division-name">OLIVE OIL STORE</span>
+            </div>
+        </div>
+
+        <div class="market-selector">
+            <div class="market-option active" id="btn-tr" onclick="changeCountry('tr')">🇹🇷 TR</div>
+            <div class="market-option" id="btn-tn" onclick="changeCountry('tn')">🇹🇳 TN</div>
+        </div>
+        <div class="loc-tag">SYSTEM: ONLINE</div>
+    </header>
+
+    <main>
+        <section id="map-area">
+            <div id="map"></div>
+            <div class="purchases-overlay">
+                <div class="overlay-header">📦 MY PURCHASES (<span id="vault-count">0</span>)</div>
+                <div id="vault-list" class="overlay-content">
+                    <p class="empty-msg">No active assets</p>
+                </div>
+            </div>
+        </section>
+
+        <aside id="store-sidebar">
+            <div id="shop-view" class="view-container">
+                <h2 class="section-title">Market</h2>
+                <div id="inventory-list" class="scroll-list"></div>
+                <div class="sidebar-footer">
+                    <button class="basket-trigger-huge" onclick="toggleCart()">
+                        OPEN BASKET (<span id="cart-count">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <div id="cart-view" class="view-container hidden">
+                <div class="back-nav" onclick="toggleCart()">
+                    <span class="back-arrow">←</span>
+                    <span class="back-text">BACK TO MARKET</span>
+                </div>
+                <h2 class="section-title">Basket</h2>
+                <div class="method-toggle">
+                    <button id="m-del" class="active" onclick="setMethod('delivery')">DELIVERY</button>
+                    <button id="m-pick" onclick="setMethod('pickup')">PICKUP</button>
+                </div>
+                <div id="cart-items" class="scroll-list"></div>
+                <div class="sidebar-footer">
+                    <div id="delivery-fee-row" class="fee-line">
+                        <span>DELIVERY FEE</span>
+                        <span id="fee-amount" class="gold">0.00</span>
+                    </div>
+                    <div class="total-container">
+                        <span class="total-label">TOTAL AMOUNT</span>
+                        <span id="cart-total" class="gold">0.00</span>
+                    </div>
+                    <button class="confirm-btn-huge" onclick="handleCheckout()">CONFIRM ORDER</button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
