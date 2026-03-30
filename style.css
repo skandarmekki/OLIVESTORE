@@ -1,10 +1,7 @@
-/* =========================================
-   1. GLOBAL SETTINGS & THEME
-   ========================================= */
 :root { 
     --bg: #080a08; 
     --surface: #121512; 
-    --accent: #d4af37; /* XYZ GOLD */
+    --accent: #d4af37;
     --text: #f0f0f0; 
     --border: #242924; 
 }
@@ -164,9 +161,6 @@ main { display: flex; flex: 1; overflow: hidden; position: relative; }
 
 .basket-trigger-huge:hover, .confirm-btn-huge:hover { filter: brightness(1.1); }
 
-/* =========================================
-   6. UTILITIES & SUPPORT
-   ========================================= */
 .whatsapp-btn { 
     position: fixed; 
     bottom: 25px; 
