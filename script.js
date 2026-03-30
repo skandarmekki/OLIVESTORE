@@ -3,9 +3,8 @@ const map = L.map('map', { zoomControl: false }).setView([39.0, 35.0], 6);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
 let basket = [];
-let myAssets = [];
+let purchasedItems = []; // Renamed from myAssets
 let orderType = 'delivery';
-let dots = [];
 let moneyType = 'TRY';
 const rate = 10.50;
 
@@ -16,44 +15,17 @@ const items = [
     { id: 4, name: "Extra Virgin Bulk version", size: "5L Tin", price: 1950 }
 ];
 
-const turkeyStores = [
-    { name: "Istanbul Zone", pos: [41.0082, 28.9784] },
-    { name: "Izmir Zone", pos: [38.4237, 27.1428] }
-];
-
-const tunisiaStores = [
-    { name: "Tunis Zone", pos: [36.8065, 10.1815] },
-    { name: "Monastir Zone", pos: [35.7643, 10.8113] },
-    { name: "Sfax Zone", pos: [34.7406, 10.7603] }
-];
-
-function showDots(list) {
-    dots.forEach(d => map.removeLayer(d));
-    dots = [];
-    list.forEach(h => {
-        const d = L.circleMarker(h.pos, { 
-            radius: 9, 
-            fillColor: "#d4af37", 
-            color: "#fff", 
-            weight: 2, 
-            fillOpacity: 0.9 
-        }).addTo(map).bindTooltip(h.name);
-        dots.push(d);
-    });
-}
-
 function changeCountry(code) {
     document.querySelectorAll('.market-option').forEach(el => el.classList.remove('active'));
     document.getElementById(`btn-${code}`).classList.add('active');
 
     moneyType = (code === 'tn') ? 'TND' : 'TRY';
 
+    // Just move the map, no dots/markers anymore
     if (code === 'tn') {
         map.flyTo([34.0, 9.0], 6, { duration: 1.5 });
-        showDots(tunisiaStores);
     } else {
         map.flyTo([39.0, 35.0], 6, { duration: 1.5 });
-        showDots(turkeyStores);
     }
 
     showItems();
@@ -116,23 +88,27 @@ function setMethod(m) {
 
 function handleCheckout() {
     if (basket.length === 0) return;
-    myAssets = [...myAssets, ...basket];
-    document.getElementById('vault-count').innerText = myAssets.length;
-    document.getElementById('vault-list').innerHTML = myAssets.map(i => `
+    
+    // Move items to the "Purchased" list
+    purchasedItems = [...purchasedItems, ...basket];
+    
+    // Simple update to the "Order History" view
+    document.getElementById('vault-count').innerText = purchasedItems.length;
+    document.getElementById('vault-list').innerHTML = purchasedItems.map(i => `
         <div style="padding:8px 0; border-bottom:1px solid #222; font-size:0.75rem;">
             <span>${i.name}</span><br>
-            <span class="gold" style="font-size:0.65rem;">Asset Secured</span>
+            <span style="color:#4CAF50; font-size:0.65rem;">Order Completed</span>
         </div>
     `).join('');
+    
     basket = [];
     update();
     toggleCart();
-    alert("DONE.");
+    alert("Purchase Successful!");
 }
 
 window.onload = () => {
     showItems();
-    showDots(turkeyStores);
     setTimeout(() => {
         document.getElementById('loading-screen').classList.add('fade-out');
         map.invalidateSize();
