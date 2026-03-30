@@ -10,20 +10,20 @@ let moneyType = 'TRY';
 const rate = 10.50;
 
 const items = [
-    { id: 1, name: "Heritage Extra Virgin Olive Oil", size: "1L Glass", price: 350 },
+    { id: 1, name: "Extra Virgin Olive Oil", size: "1L Glass", price: 350 },
     { id: 2, name: "Early Harvest Cold Pressed", size: "1L Glass", price: 480 },
-    { id: 3, name: "Organic Reserve (Single Estate)", size: "750ml", price: 520 },
-    { id: 4, name: "Chef's Selection Bulk Tin", size: "5L Tin", price: 1950 }
+    { id: 3, name: "Organic Reserve", size: "750ml", price: 520 },
+    { id: 4, name: "Extra Virgin Bulk version", size: "5L Tin", price: 1950 }
 ];
 
 const trHubs = [
-    { name: "Istanbul Center", pos: [41.0082, 28.9784] },
-    { name: "Izmir Port", pos: [38.4237, 27.1428] }
+    { name: "Istanbul Zone", pos: [41.0082, 28.9784] },
+    { name: "Izmir Zone", pos: [38.4237, 27.1428] }
 ];
 
 const tnHubs = [
-    { name: "Tunis Mill", pos: [36.8065, 10.1815] },
-    { name: "Monastir Hub", pos: [35.7643, 10.8113] },
+    { name: "Tunis Zone", pos: [36.8065, 10.1815] },
+    { name: "Monastir Zone", pos: [35.7643, 10.8113] },
     { name: "Sfax Zone", pos: [34.7406, 10.7603] }
 ];
 
