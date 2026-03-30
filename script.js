@@ -16,12 +16,12 @@ const items = [
     { id: 4, name: "Extra Virgin Bulk version", size: "5L Tin", price: 1950 }
 ];
 
-const trHubs = [
+const turkeyStores = [
     { name: "Istanbul Zone", pos: [41.0082, 28.9784] },
     { name: "Izmir Zone", pos: [38.4237, 27.1428] }
 ];
 
-const tnHubs = [
+const tunisiaStores = [
     { name: "Tunis Zone", pos: [36.8065, 10.1815] },
     { name: "Monastir Zone", pos: [35.7643, 10.8113] },
     { name: "Sfax Zone", pos: [34.7406, 10.7603] }
@@ -50,10 +50,10 @@ function changeCountry(code) {
 
     if (code === 'tn') {
         map.flyTo([34.0, 9.0], 6, { duration: 1.5 });
-        showDots(tnHubs);
+        showDots(tunisiaStores);
     } else {
         map.flyTo([39.0, 35.0], 6, { duration: 1.5 });
-        showDots(trHubs);
+        showDots(turkeyStores);
     }
 
     showItems();
@@ -132,7 +132,7 @@ function handleCheckout() {
 
 window.onload = () => {
     showItems();
-    showDots(trHubs);
+    showDots(turkeyStores);
     setTimeout(() => {
         document.getElementById('loading-screen').classList.add('fade-out');
         map.invalidateSize();
