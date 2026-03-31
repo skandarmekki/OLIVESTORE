@@ -3,26 +3,25 @@ const map = L.map('map', { zoomControl: false }).setView([39.0, 35.0], 6);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
 let basket = [];
-let turkeyStores = [];
-let tunisiaStores = [];
-let orderType = 'delivery';
+let vaultStorage = []; 
+let orderType = 'delivery'; 
 let dots = []; 
 let moneyType = 'TRY';
 const rate = 10.50;
 
 const items = [
-    { id: 1, name: "Extra Virgin Olive Oil", size: "1L ", price: 350 },
+    { id: 1, name: "Extra Virgin Olive Oil", size: "1L", price: 350 },
     { id: 2, name: "Early Harvest Cold Pressed", size: "1L", price: 480 },
     { id: 3, name: "Organic Reserve", size: "750ml", price: 520 },
     { id: 4, name: "Extra Virgin Bulk version", size: "5L", price: 1950 }
 ];
 
-const trHubs = [
+const trStores = [
     { name: "Istanbul Store", pos: [41.0082, 28.9784] },
     { name: "Izmir Store", pos: [38.4237, 27.1428] }
 ];
 
-const tnHubs = [
+const tnStores = [
     { name: "Tunis Store", pos: [36.8065, 10.1815] },
     { name: "Monastir Store", pos: [35.7643, 10.8113] },
     { name: "Sfax Store", pos: [34.7406, 10.7603] }
@@ -31,30 +30,31 @@ const tnHubs = [
 function showDots(list) {
     dots.forEach(d => map.removeLayer(d));
     dots = [];
-    list.forEach(h => {
-        const d = L.circleMarker(h.pos, { 
+    list.forEach(store => {
+        const marker = L.circleMarker(store.pos, { 
             radius: 9, 
             fillColor: "#d4af37", 
             color: "#fff", 
             weight: 2, 
             fillOpacity: 0.9 
-        }).addTo(map).bindTooltip(h.name);
-        dots.push(d);
+        }).addTo(map).bindTooltip(store.name);
+        dots.push(marker);
     });
 }
 
 function changeCountry(code) {
     document.querySelectorAll('.market-option').forEach(el => el.classList.remove('active'));
-    document.getElementById(`btn-${code}`).classList.add('active');
+    const targetBtn = document.getElementById(`btn-${code}`);
+    if (targetBtn) targetBtn.classList.add('active');
 
     moneyType = (code === 'tn') ? 'TND' : 'TRY';
 
     if (code === 'tn') {
         map.flyTo([34.0, 9.0], 6, { duration: 1.5 });
-        showDots(tnHubs);
+        showDots(tnStores);
     } else {
         map.flyTo([39.0, 35.0], 6, { duration: 1.5 });
-        showDots(trHubs);
+        showDots(trStores);
     }
 
     showItems();
@@ -69,8 +69,9 @@ function format(val) {
 }
 
 function showItems() {
-    const box = document.getElementById('inventory-list');
-    box.innerHTML = items.map(p => `
+    const shelf = document.getElementById('inventory-list');
+    if (!shelf) return;
+    shelf.innerHTML = items.map(p => `
         <div class="product-card">
             <small class="gold">XYZ PREMIUM</small>
             <h3 style="margin:5px 0">${p.name}</h3>
@@ -82,78 +83,96 @@ function showItems() {
 }
 
 function add(id) {
-    basket.push(items.find(p => p.id === id));
-    update();
+    const selectedItem = items.find(p => p.id === id);
+    if (selectedItem) {
+        basket.push(selectedItem);
+        update();
+    }
 }
 
 function update() {
-    document.getElementById('cart-count').innerText = basket.length;
-    const list = document.getElementById('cart-items');
-    list.innerHTML = basket.map(i => `
-        <div style="padding:12px; border-bottom:1px solid #222; display:flex; justify-content:space-between; font-size:0.85rem;">
-            <span>${i.name}</span>
-            <span class="gold">${format(i.price)}</span>
-        </div>
-    `).join('');
+    const countEl = document.getElementById('cart-count');
+    const listEl = document.getElementById('cart-items');
+    const feeEl = document.getElementById('fee-amount');
+    const totalEl = document.getElementById('cart-total');
+
+    if (countEl) countEl.innerText = basket.length;
+    
+    if (listEl) {
+        listEl.innerHTML = basket.map(i => `
+            <div style="padding:12px; border-bottom:1px solid #222; display:flex; justify-content:space-between; font-size:0.85rem;">
+                <span>${i.name}</span>
+                <span class="gold">${format(i.price)}</span>
+            </div>
+        `).join('');
+    }
 
     let fee = (orderType === 'delivery' && basket.length > 0) ? 50 : 0;
-    document.getElementById('fee-amount').innerText = format(fee);
-    const total = basket.reduce((a, b) => a + b.price, 0);
-    document.getElementById('cart-total').innerText = format(total + fee);
+    if (feeEl) feeEl.innerText = format(fee);
+    
+    const subtotal = basket.reduce((sum, item) => sum + item.price, 0);
+    if (totalEl) totalEl.innerText = format(subtotal + fee);
 }
 
 function toggleCart() {
-    document.getElementById('shop-view').classList.toggle('hidden');
-    document.getElementById('cart-view').classList.toggle('hidden');
+    const shopView = document.getElementById('shop-view');
+    const cartView = document.getElementById('cart-view');
+    if (shopView && cartView) {
+        shopView.classList.toggle('hidden');
+        cartView.classList.toggle('hidden');
+    }
+    map.invalidateSize();
 }
 
 function setMethod(m) {
     orderType = m;
-    document.getElementById('m-del').className = (m === 'delivery' ? 'active' : '');
-    document.getElementById('m-pick').className = (m === 'pickup' ? 'active' : '');
-    document.getElementById('delivery-fee-row').style.display = (m === 'delivery' ? 'flex' : 'none');
+    const delBtn = document.getElementById('m-del');
+    const pickBtn = document.getElementById('m-pick');
+    const feeRow = document.getElementById('delivery-fee-row');
+
+    if (delBtn) delBtn.className = (m === 'delivery' ? 'active' : '');
+    if (pickBtn) pickBtn.className = (m === 'pickup' ? 'active' : '');
+    if (feeRow) feeRow.style.display = (m === 'delivery' ? 'flex' : 'none');
+    
     update();
 }
 
 function handleCheckout() {
     if (basket.length === 0) return;
     
-    if (moneyType === 'TRY') {
-        turkeyStores = [...turkeyStores, ...basket];
-    } else {
-        tunisiaStores = [...tunisiaStores, ...basket];
-    }
+    basket.forEach(item => {
+        vaultStorage.push({
+            ...item,
+            origin: (moneyType === 'TRY' ? 'Turkey Store' : 'Tunisia Store')
+        });
+    });
     
-    const totalInStores = turkeyStores.length + tunisiaStores.length;
-    document.getElementById('vault-count').innerText = totalInStores;
+    const vCount = document.getElementById('vault-count');
+    const vList = document.getElementById('vault-list');
 
-    const trList = turkeyStores.map(i => `
-        <div style="padding:8px 0; border-bottom:1px solid #222; font-size:0.75rem;">
-            <span>${i.name}</span><br>
-            <span class="gold" style="font-size:0.65rem;">Turkey Store</span>
-        </div>
-    `).join('');
-
-    const tnList = tunisiaStores.map(i => `
-        <div style="padding:8px 0; border-bottom:1px solid #222; font-size:0.75rem;">
-            <span>${i.name}</span><br>
-            <span class="gold" style="font-size:0.65rem;">Tunisia Store</span>
-        </div>
-    `).join('');
-
-    document.getElementById('vault-list').innerHTML = trList + tnList;
+    if (vCount) vCount.innerText = vaultStorage.length;
+    if (vList) {
+        vList.innerHTML = vaultStorage.map(i => `
+            <div style="padding:8px 0; border-bottom:1px solid #222; font-size:0.75rem;">
+                <span>${i.name}</span><br>
+                <span class="gold" style="font-size:0.65rem;">${i.origin}</span>
+            </div>
+        `).join('');
+    }
     
     basket = [];
     update();
     toggleCart();
-    alert("DONE.");
+    alert("Order Confirmed.");
 }
 
 window.onload = () => {
     showItems();
-    showDots(trHubs);
+    showDots(trStores);
+    
     setTimeout(() => {
-        document.getElementById('loading-screen').classList.add('fade-out');
+        const loader = document.getElementById('loading-screen');
+        if (loader) loader.classList.add('fade-out');
         map.invalidateSize();
-    }, 2500);
+    }, 2000);
 };
